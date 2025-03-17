@@ -1,25 +1,34 @@
+import "antd/dist/antd.min.css";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 
-const LoginPage = () => {
-    const navigate = useNavigate();
+const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {    const navigate = useNavigate();
     const [form] = Form.useForm();
 
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
 
         if (values.username === 'admin' && values.password === 'password') {
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('username', values.username);
+            const username =  values.username;
+            const email =  'admin@666.com';
+            const isLoggedIn = 'true';
+
+            localStorage.setItem('isLoggedIn', isLoggedIn);
+            localStorage.setItem('username', username);
+            localStorage.setItem('email', email);
 
             if (values.remember) {
                 localStorage.setItem('rememberMe', 'true');
             } else {
                 localStorage.removeItem('rememberMe');
             }
+
+            setUsername(username);
+            setEmail(email); // 假设你有一个邮箱字段
+            setIsLoggedIn(isLoggedIn);
 
             navigate('/comments');
         } else {
@@ -28,15 +37,11 @@ const LoginPage = () => {
     };
 
     React.useEffect(() => {
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        const rememberMe = localStorage.getItem('rememberMe') === 'true';
+        const username = localStorage.getItem('username');
         const registeredUsername = localStorage.getItem('registeredUsername');
     
-        if (isLoggedIn && rememberMe) {
-            navigate('/comments');
-        } else if (registeredUsername) {
-            form.setFieldsValue({ username: registeredUsername });
-        }
+        form.setFieldsValue({ username: username ? username : registeredUsername  });
+
     }, [navigate, form]);
 
     return (
