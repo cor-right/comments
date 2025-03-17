@@ -1,22 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
-import Login from './Login.js';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/login';
+import RegisterPage from './pages/register';
+import CommentsPage from './pages/comments';
 
-function App() {
-  const Home = () => {
-    return <h1>Hello World</h1>;
-  };
-
+const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        {/* <Route path="/register" element={<Register />} /> */}
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/comments" element={<CommentsPage />} />
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
