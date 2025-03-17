@@ -1,24 +1,16 @@
-import { Avatar, Button, Comment, Form, Input, List } from 'antd';
 import "antd/dist/antd.min.css";
+import { Avatar, Button, Comment, Form, Input, List } from 'antd';
 import moment from 'moment';
 import React, { useState } from 'react';
 const { TextArea } = Input;
-const ExampleComment = ({ children }) => (
-    <Comment
-        actions={[<span key="comment-nested-reply-to">Reply to</span>]}
-        author={<a>Han Solo</a>}
-        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />}
-        content={
-            <p>
-                We supply a series of design principles, practical patterns and high quality design
-                resources (Sketch and Axure).
-            </p>
-        }
-    >
-        {children}
-    </Comment>
+const CommentList = ({ comments }) => (
+    <List
+        dataSource={comments}
+        header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
+        itemLayout="horizontal"
+        renderItem={(props) => <Comment {...props} />}
+    />
 );
-
 const Editor = ({ onChange, onSubmit, submitting, value }) => (
     <>
         <Form.Item>
@@ -31,7 +23,6 @@ const Editor = ({ onChange, onSubmit, submitting, value }) => (
         </Form.Item>
     </>
 );
-
 const CommentsPage = () => {
     const [comments, setComments] = useState([]);
     const [submitting, setSubmitting] = useState(false);
@@ -46,7 +37,7 @@ const CommentsPage = () => {
                 ...comments,
                 {
                     author: 'Han Solo',
-                    avatar: 'https://joeschmoe.io/api/v1/random',
+                    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
                     content: <p>{value}</p>,
                     datetime: moment('2016-11-22').fromNow(),
                 },
@@ -56,23 +47,21 @@ const CommentsPage = () => {
     const handleChange = (e) => {
         setValue(e.target.value);
     };
-
-
     return (
-        <ExampleComment
-            content={
-                <Editor
-                    onChange={handleChange}
-                    onSubmit={handleSubmit}
-                    submitting={submitting}
-                    value={value}
-                />
-            }>
-            <ExampleComment>
-                <ExampleComment />
-                <ExampleComment />
-            </ExampleComment>
-        </ExampleComment>
+        <>
+            {comments.length > 0 && <CommentList comments={comments} />}
+            <Comment
+                avatar={<Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />}
+                content={
+                    <Editor
+                        onChange={handleChange}
+                        onSubmit={handleSubmit}
+                        submitting={submitting}
+                        value={value}
+                    />
+                }
+            />
+        </>
     );
 };
 
