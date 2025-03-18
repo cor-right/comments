@@ -9,7 +9,6 @@ import axios from 'axios';
 
 const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
     const navigate = useNavigate();
-
     const [form] = Form.useForm();
 
 
@@ -26,10 +25,14 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
             const inp_password = values.password;
             const inp_email = isEmail(values.username) ? values.username : null;
 
-            const response = await axios.post('/api/login', {
+            const response = await axios.post('https://localhost:443/user/login', {
                 userName: inp_username,
                 email: inp_email,
                 password: inp_password,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
             console.log('Login response: ', response.data);
 
