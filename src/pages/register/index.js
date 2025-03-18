@@ -1,6 +1,8 @@
 import "antd/dist/antd.min.css";
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 import {
   Button,
@@ -44,13 +46,27 @@ const RegisterPage = () => {
     const navigate = useNavigate();
 
     const handleSubmit = async (values) => {
+        const username = values.nickname;
+        const password = values.password;
+        const email = values.email;
 
+        const response = await axios.post('https://127.0.0.1:443/user/register', {
+            userName: username,
+            password: password,
+            email: email
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('Response: ', response)
     }
 
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
         console.log('Received values of form: ', values);
 
-        
+        const loginSuccess = await handleSubmit(values);
 
         localStorage.setItem('registeredUsername', values.nickname);
 
