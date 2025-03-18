@@ -12,11 +12,13 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
     const [form] = Form.useForm();
 
 
+    // 判断是否是邮箱
     const isEmail = (str) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(str);
     };
 
+    // 登录提交
     const handleSubmit = async (values) => {
         console.log('Handle submit: ', values);
 
@@ -71,6 +73,7 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
         }
     };
 
+    // 表单提交回调
     const onFinish = async (values) => {
         console.log('Received values of form: ', values);
 
@@ -82,6 +85,7 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
         }
     };
 
+    // 默认填写用户名
     React.useEffect(() => {
         form.setFieldsValue({ username: localStorage.getItem('username') ? localStorage.getItem('username') : sessionStorage.getItem('registeredUsername') });
     }, [navigate, form]);
