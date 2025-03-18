@@ -11,7 +11,6 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
     const navigate = useNavigate();
 
     const [form] = Form.useForm();
-    const [messageApi, contextHolder] = message.useMessage();
 
 
     const isEmail = (str) => {
@@ -54,7 +53,7 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
                 setEmail(user.email);
                 setIsLoggedIn(true);
 
-                messageApi.info('Hello, Ant Design!');
+                message.info('Hello, Ant Design!');
 
                 return true;
 
