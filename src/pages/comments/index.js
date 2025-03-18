@@ -48,7 +48,7 @@ const NestedComment = ({ comment, replyClick }) => {
             <div >
                 {/* 递归调用 Comment 组件渲染子评论 */}
                 {comment.children.map((childComment) => (
-                    <NestedComment key={childComment.id} comment={childComment} />
+                    <NestedComment key={childComment.id} comment={childComment} replyClick={replyClick} />
                 ))}
             </div>
         ) : null}</Comment>
