@@ -1,7 +1,7 @@
 import "antd/dist/antd.min.css";
 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, message } from 'antd';
+import { Button, Checkbox, Form, Input } from 'antd';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -29,6 +29,7 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
                 userName: inp_username,
                 email: inp_email,
                 password: inp_password,
+                rememberMonth: values.remember,
             }, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -37,11 +38,11 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
 
             console.log('Login response: ', response.data);
 
-            if (response.data.success === 'true') {
+            if (response.data.success === true) {
                 const user = response.data.data;
 
                 localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('username', user.userName);
+                localStorage.setItem('username', user.username);
                 localStorage.setItem('email', user.email);
                 localStorage.setItem('user_id', user.userId);
 
@@ -53,15 +54,15 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
                     localStorage.removeItem('rememberMe');
                 }
 
-                setUsername(user.userName);
+                setUsername(user.username);
                 setEmail(user.email);
                 setIsLoggedIn(true);
-
-                message.info('Hello, Ant Design!');
-
+               
+                alert('欢迎 ' + user.username + ' !');
                 return true;
 
             } else {
+                alert(response.data.errorMsg);
                 return false;
             }
         } catch (error) {
@@ -82,11 +83,7 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
     };
 
     React.useEffect(() => {
-        const username = localStorage.getItem('username');
-        const registeredUsername = localStorage.getItem('registeredUsername');
-
-        form.setFieldsValue({ username: username ? username : registeredUsername });
-
+        form.setFieldsValue({ username: localStorage.getItem('username') ? localStorage.getItem('username') : sessionStorage.getItem('registeredUsername') });
     }, [navigate, form]);
 
     return (
@@ -108,11 +105,11 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
                 rules={[
                     {
                         required: true,
-                        message: 'Please input your Username!',
+                        message: '请输入用户名或邮箱！',
                     },
                 ]}
             >
-                <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+                <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="用户名/邮箱" />
             </Form.Item>
 
             <Form.Item
@@ -120,28 +117,29 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
                 rules={[
                     {
                         required: true,
-                        message: 'Please input your Password!',
+                        message: '请输入密码！',
                     },
                 ]}
             >
                 <Input
                     prefix={<LockOutlined className="site-form-item-icon" />}
                     type="password"
-                    placeholder="Password"
+                    placeholder="密码"
                 />
             </Form.Item>
 
             <Form.Item>
                 <Form.Item name="remember" valuePropName="checked" noStyle>
-                    <Checkbox>Remember me</Checkbox>
+                    <Checkbox>记住我</Checkbox>
                 </Form.Item>
             </Form.Item>
 
             <Form.Item>
                 <Button type="primary" htmlType="submit" className="login-form-button">
-                    Log in
+                    登录
                 </Button>
-                Or <Link to='/register'>register now!</Link>
+                <br/>
+                <Link to='/register'>没有账号？立即注册！</Link>
             </Form.Item>
         </Form>
     );
