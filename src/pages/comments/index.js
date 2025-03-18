@@ -4,17 +4,18 @@ import moment from 'moment';
 import React, { useState, useRef } from 'react';
 const { TextArea } = Input;
 
-/**
- * 评论列表
- * @param {*} param0 
- * @returns 
- */
-const CommentList = ({ comments }) => (
+// 评论列表
+const CommentList = ({ comments, replyClick }) => (
     <List
         dataSource={comments}
-        header={`${comments.length} ${'条评论'}`}
+        // header={`${comments.length} ${'条评论'}`}
         itemLayout="horizontal"
-        renderItem={(props) => <Comment {...props} />}
+        // renderItem={(props) => <NestedComment {...props} />}
+        renderItem={item => (
+            <List.Item>
+                <NestedComment comment={item} replyClick={replyClick}></NestedComment>
+            </List.Item>
+        )}
     />
 );
 
@@ -32,6 +33,57 @@ const Editor = ({ onChange, onSubmit, submitting, value, sharedProps }) => (
     </>
 );
 
+const NestedComment = ({ comment, replyClick }) => {
+    return (
+        <Comment
+            actions={[<span key="comment-nested-reply-to" onClick={replyClick}>Reply to</span>]}
+            author={<a>{comment.userName}</a>}
+            avatar={<Avatar src={comment.headImg} alt="Han Solo" />}
+            content={
+                <p>
+                    {comment.content}
+                </p>
+            }
+        >{comment.children && comment.children.length > 0 ? (
+            <div >
+                {/* 递归调用 Comment 组件渲染子评论 */}
+                {comment.children.map((childComment) => (
+                    <NestedComment key={childComment.id} comment={childComment} />
+                ))}
+            </div>
+        ) : null}</Comment>
+    );
+};
+
+const mockData = {
+    "commentList": [
+        {
+            "userName": "张三",
+            "headImg": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+            "content": "一条评论",
+            "children": [
+                {
+                    "userName": "李四",
+                    "headImg": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+                    "content": "李四评论张三一条评论",
+                    "children": [
+                        {
+                            "userName": "六",
+                            "headImg": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+                            "content": "六评论李四一条评论",
+                        }
+                    ]
+                },
+                {
+                    "userName": "王五",
+                    "headImg": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+                    "content": "王五评论张三一条评论",
+                }
+            ]
+        }
+    ]
+};
+
 
 const CommentsPage = () => {
     // 评论列表更新
@@ -42,11 +94,8 @@ const CommentsPage = () => {
 
     // 焦点
     const inputRef = useRef(null);
-
     const sharedProps = {
-        ref: inputRef,
-        // rows:4,
-        //  onChange={onChange} value={value} 
+        ref: inputRef
     };
 
 
@@ -77,6 +126,7 @@ const CommentsPage = () => {
 
     // reply点击监听
     const onReplyClick = () => {
+        console.log('-------click')
         inputRef.current.focus({
             cursor: 'start',
         });
@@ -84,7 +134,7 @@ const CommentsPage = () => {
 
     return (
         <>
-            {comments.length > 0 && <CommentList comments={comments} />}
+            {mockData.commentList.length > 0 && <CommentList comments={mockData.commentList} replyClick={onReplyClick} />}
             <Comment
                 avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" alt="Han Solo" />}
                 content={
@@ -97,6 +147,7 @@ const CommentsPage = () => {
                     />
                 }
             />
+
         </>
     );
 };
