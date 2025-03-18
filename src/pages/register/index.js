@@ -43,8 +43,14 @@ const RegisterPage = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
+    const handleSubmit = async (values) => {
+
+    }
+
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
+
+        
 
         localStorage.setItem('registeredUsername', values.nickname);
 
