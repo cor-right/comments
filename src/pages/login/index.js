@@ -37,18 +37,6 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
                 }
             });
 
-
-            // const response = await axios.post('https://127.0.0.1:443/login', {
-            //     userName: values.username,
-                // email: inp_email,
-            //     password: values.password,
-                // rememberMonth: values.remember,
-            // }, {
-            //     headers: {
-                    // 'Content-Type': 'application/json'
-            //     }
-            // });
-
             console.log('Login response: ', response.data);
 
             if (response.data.success === true) {

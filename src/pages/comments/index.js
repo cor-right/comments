@@ -1,8 +1,12 @@
 import "antd/dist/antd.min.css";
 import { Avatar, Button, Comment, Form, Input, List } from 'antd';
 import moment from 'moment';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
+
 const { TextArea } = Input;
+
+
 
 // 评论列表
 const CommentList = ({ comments, replyClick }) => (
@@ -98,10 +102,44 @@ const CommentsPage = () => {
         ref: inputRef
     };
 
+    const queryList = async () => {
+        try {
+            return await axios.get('https://127.0.0.1:443/comments/list', {
+                withCredentials: true
+            });
+           
+        } catch(error) {
+            return [];
+        }
+    }
+
+    const submitData = async () => {
+        try {
+            return await axios.post('https://127.0.0.1:443/comments/create', {
+                content: currentComment
+            }, {
+                withCredentials: true
+            });
+        } catch(error) {
+            return [];
+        }
+    }
+
+    React.useEffect(() => {
+        queryList().then(data => {
+            console.info(data.data.data);
+            setComments(data.data.data);
+        });
+    }, []);
 
     // 提交触发
     const handleSubmit = () => {
         if (!currentComment) return;
+
+        submitData();
+        queryList().then(data => {
+            setComments(data);
+        });
 
         setSubmitting(true);
         setTimeout(() => {
@@ -134,7 +172,7 @@ const CommentsPage = () => {
 
     return (
         <>
-            {mockData.commentList.length > 0 && <CommentList comments={mockData.commentList} replyClick={onReplyClick} />}
+            {comments.length > 0 && <CommentList comments={comments} replyClick={onReplyClick} />}
             <Comment
                 avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" alt="Han Solo" />}
                 content={
