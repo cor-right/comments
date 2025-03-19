@@ -23,20 +23,31 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
         console.log('Handle submit: ', values);
 
         try {
-            const inp_username = isEmail(values.username) ? null : values.username;
-            const inp_password = values.password;
-            const inp_email = isEmail(values.username) ? values.username : null;
+            // const inp_username = isEmail(values.username) ? null : values.username;
+            // const inp_password = values.password;
+            // const inp_email = isEmail(values.username) ? values.username : null;
 
-            const response = await axios.post('https://127.0.0.1:443/user/login', {
-                userName: inp_username,
-                email: inp_email,
-                password: inp_password,
-                rememberMonth: values.remember,
-            }, {
+            const formData = new FormData();
+            formData.append("username", values.username);
+            formData.append("password", values.password);
+
+            const response = await axios.post('https://127.0.0.1:443/login', formData, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'multipart/form-data'
                 }
             });
+
+
+            // const response = await axios.post('https://127.0.0.1:443/login', {
+            //     userName: values.username,
+                // email: inp_email,
+            //     password: values.password,
+                // rememberMonth: values.remember,
+            // }, {
+            //     headers: {
+                    // 'Content-Type': 'application/json'
+            //     }
+            // });
 
             console.log('Login response: ', response.data);
 
@@ -44,7 +55,7 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
                 const user = response.data.data;
 
                 localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('username', user.username);
+                localStorage.setItem('username', values.username);
                 localStorage.setItem('email', user.email);
                 localStorage.setItem('user_id', user.userId);
 
@@ -67,6 +78,7 @@ const LoginPage = ({ setIsLoggedIn, setUsername, setEmail }) => {
                 alert(response.data.errorMsg);
                 return false;
             }
+            
         } catch (error) {
             console.error('Login error:', error);
             return false;

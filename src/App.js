@@ -1,5 +1,5 @@
-import React,  { useEffect, useState }  from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate    } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom';
 import { PageHeader } from 'antd';
 import { UserOutlined } from '@ant-design/icons'; // 导入默认图标
 
@@ -47,13 +47,13 @@ const App = () => {
             // isLoggedIn ?  <Navigate to="/comments" /> : <Navigate to="/login" />
             <Navigate to="/comments" />
           } />
-        <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setEmail={setEmail} />} />
-        <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setEmail={setEmail} />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/comments" element={<CommentsPage />} />
         </Routes>
       </Router>
     </>
-    
+
   );
 };
 
