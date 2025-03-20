@@ -1,12 +1,10 @@
 import "antd/dist/antd.min.css";
 import { Avatar, Button, Comment, Form, Input, List } from 'antd';
-import moment from 'moment';
-import React, { useState, useRef, useEffect, use } from 'react';
+import moment from'moment';
+import React, { useState, useRef, useEffect } from'react';
 import axios from 'axios';
 
 const { TextArea } = Input;
-
-
 
 // 评论列表
 const CommentList = ({ comments, replyClick }) => (
@@ -40,15 +38,15 @@ const Editor = ({ onChange, onSubmit, submitting, value, sharedProps }) => (
 const NestedComment = ({ comment, replyClick }) => {
     return (
         <Comment
-            actions={[<span key="comment-nested-reply-to" onClick={replyClick}>Reply to</span>]}
-            author={<a>{comment.userName}</a>}
-            avatar={<Avatar src={comment.headImg} alt="Han Solo" />}
+            actions={[<span key="comment-nested-reply-to" onClick={() => replyClick(comment.id)}>Reply to</span>]}
+            author={<a>{comment.userName || '测试用户'}</a>}
+            avatar={<Avatar src='https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png' alt="Han Solo" />}
             content={
                 <p>
                     {comment.content}
                 </p>
             }
-        >{comment.children && comment.children.length > 0 ? (
+        >{comment.children && comment.children.length > 0? (
             <div >
                 {/* 递归调用 Comment 组件渲染子评论 */}
                 {comment.children.map((childComment) => (
@@ -127,7 +125,7 @@ const CommentsPage = () => {
         }
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         console.log('------')
         queryList().then(res => {
             console.info('xxxx', res);
@@ -184,12 +182,12 @@ const CommentsPage = () => {
     };
 
     // reply点击监听
-    const onReplyClick = (e) => {
-        console.log('-------click')
+    const onReplyClick = (commentId) => {
+        console.log('-------click', commentId);
         inputRef.current.focus({
             cursor: 'start',
         });
-        setParentCommentId()
+        setParentCommentId(commentId);
     }
 
     return (
