@@ -1,7 +1,7 @@
 import "antd/dist/antd.min.css";
 import { Avatar, Button, Comment, Form, Input, List } from 'antd';
 import moment from 'moment';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, use } from 'react';
 import axios from 'axios';
 
 const { TextArea } = Input;
@@ -95,6 +95,7 @@ const CommentsPage = () => {
     // 提交状态更新
     const [submitting, setSubmitting] = useState(false);
     const [currentComment, setCommentValue] = useState('');
+    const [parentCommentId, setParentCommentId] = useState('');
 
     // 焦点
     const inputRef = useRef(null);
@@ -107,8 +108,8 @@ const CommentsPage = () => {
             return await axios.get('https://127.0.0.1:443/comments/list', {
                 withCredentials: true
             });
-           
-        } catch(error) {
+
+        } catch (error) {
             return [];
         }
     }
@@ -116,19 +117,24 @@ const CommentsPage = () => {
     const submitData = async () => {
         try {
             return await axios.post('https://127.0.0.1:443/comments/create', {
-                content: currentComment
+                content: currentComment,
+                parentCommentId: parentCommentId
             }, {
                 withCredentials: true
             });
-        } catch(error) {
+        } catch (error) {
             return [];
         }
     }
 
     React.useEffect(() => {
-        queryList().then(data => {
-            console.info(data.data.data);
-            setComments(data.data.data);
+        console.log('------')
+        queryList().then(res => {
+            console.info('xxxx', res);
+            const { data = {} } = res || {}
+            const { data: realData = [] } = data || {}
+            console.log('queryListxxxx', realData)
+            setComments(realData)
         });
     }, []);
 
@@ -136,26 +142,41 @@ const CommentsPage = () => {
     const handleSubmit = () => {
         if (!currentComment) return;
 
-        submitData();
-        queryList().then(data => {
-            setComments(data);
+        submitData().then(res => {
+            const { data = {} } = res
+            const { success } = data || {}
+
+            if (success) {
+                console.log('suc')
+            }
+
+            setSubmitting(false);
+            setCommentValue('')
+
+            queryList().then(res => {
+                console.info('xxxx', res);
+                const { data = {} } = res || {}
+                const { data: realData = [] } = data || {}
+                console.log('queryListxxxx', realData)
+                setComments(realData)
+            });
         });
 
         setSubmitting(true);
-        setTimeout(() => {
-            setSubmitting(false);
-            setCommentValue('');
-            setComments([
-                ...comments,
-                {
-                    author: 'Han Solo',
-                    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-                    content: <p>{currentComment}</p>,
-                    datetime: moment('2016-11-22').fromNow(),
-                    actions: [<span key="comment-list-reply-to-0" onClick={onReplyClick}>Reply to</span>],
-                },
-            ]);
-        }, 1000);
+        // setTimeout(() => {
+        //     setSubmitting(false);
+        //     setCommentValue('');
+        //     setComments([
+        //         ...comments,
+        //         {
+        //             author: 'Han Solo',
+        //             avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+        //             content: <p>{currentComment}</p>,
+        //             datetime: moment('2016-11-22').fromNow(),
+        //             actions: [<span key="comment-list-reply-to-0" onClick={onReplyClick}>Reply to</span>],
+        //         },
+        //     ]);
+        // }, 1000);
     };
 
     const handleChange = (e) => {
@@ -163,11 +184,12 @@ const CommentsPage = () => {
     };
 
     // reply点击监听
-    const onReplyClick = () => {
+    const onReplyClick = (e) => {
         console.log('-------click')
         inputRef.current.focus({
             cursor: 'start',
         });
+        setParentCommentId()
     }
 
     return (
